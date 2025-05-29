@@ -13,18 +13,21 @@ void AltDVMManager::addDVM(const string& dvmId, int coorX, int coorY, const stri
     }
 }
 
-void AltDVMManager::selectAltDVM(int currX, int currY) {
-    if (DVMList.empty()) return;
-
-    int minDist = numeric_limits<int>::max();
-    for (auto& dvm : DVMList) {
-        int x = dvm.getLocation().first;
-        int y = dvm.getLocation().second;
-        int dist = (currX - x) * (currX - x) + (currY - y) * (currY - y);
-        if (dist < minDist) {
-            minDist = dist;
-            selectedDVMId = dvm.getId();
+bool AltDVMManager::selectAltDVM(int currX, int currY) {
+    if (DVMList.empty()) {
+        return false;
+    } else {
+        int minDist = numeric_limits<int>::max();
+        for (auto& dvm : DVMList) {
+            int x = dvm.getLocation().first;
+            int y = dvm.getLocation().second;
+            int dist = (currX - x) * (currX - x) + (currY - y) * (currY - y);
+            if (dist < minDist) {
+                minDist = dist;
+                selectedDVMId = dvm.getId();
+            }
         }
+        return true;
     }
 }
 

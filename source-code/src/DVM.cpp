@@ -73,7 +73,10 @@ void DVM::handleBuyFlow() {
     } else {
         string tempMsg = msgManager.createRequestItemStockAndLocation(itemManager.getSelectedItemId(), itemManager.getSelectedItemNum());
         msgManager.sendTo("0",tempMsg);
-        altDVMManager.selectAltDVM(coorX, coorY);
+        if(!altDVMManager.selectAltDVM(coorX, coorY)){
+            std::cout << "대안 자판기가 없습니다." << std::endl;
+            return;
+        }
 
         // 선결제 원하는 경우
         if (askUserPrepayment() == "y") {
