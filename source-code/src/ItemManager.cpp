@@ -26,7 +26,7 @@ ItemManager::ItemManager()
     itemList.emplace_back(17, "이온음료", 1300, 10);
     itemList.emplace_back(18, "아메리카노", 1900, 5);
     itemList.emplace_back(19, "핫초코", 1800, 6);
-    itemList.emplace_back(20, "카페라떼", 2000, 4);
+    itemList.emplace_back(20, "카페라떼", 2000, 3);
 }
 
 // 아이템 목록 보여주기

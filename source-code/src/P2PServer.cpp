@@ -75,7 +75,7 @@ void P2PServer::listenLoop() {
 }
 
 void P2PServer::handleClient(SOCKET clientSocket) {
-    char buffer[4096];
+    char buffer[4096] = {0};
     int bytes = recv(clientSocket, buffer, sizeof(buffer), 0);
     if (bytes > 0) {
         std::string request(buffer, bytes);

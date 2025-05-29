@@ -56,12 +56,45 @@ std::string MsgManager::createResponsePrepayment(const std::string& dstId, int i
 }
 
 // 메시지 전송
-void MsgManager::sendTo(const std::string& dstId, const std::string& msg) {
-    int basePort = 5000;
-    int dvmNum = std::stoi(dstId.substr(1)); // DVM id에서 숫자 추출("T2" → 2)
-    int targetPort = basePort + dvmNum;
+// void MsgManager::sendTo(const std::string& dstId, const std::string& msg) {
+//     int basePort = 5000;
+//     // 브로드캐스팅
+//     if(dstId == "0"){
+        
+//     }
+//     int dvmNum = std::stoi(dstId.substr(1)); // DVM id에서 숫자 추출("T2" → 2)
+//     int targetPort = basePort + dvmNum;
 
+//     std::string resp;
+//     p2pClient->sendMessageToPeer("127.0.0.1", targetPort, msg, resp);
+// }
+
+void MsgManager::sendTo(const std::string& dstId, const std::string& msg) {
+    int basePort = 5001;
     std::string resp;
+    int targetPort = basePort;
+    int dvmNum;
+
+    if (dstId == "0") {
+        // 브로드캐스팅 처리
+        std::cout << "[MsgManager] 브로드캐스트로 전송: " << msg << std::endl;
+        targetPort++;
+        p2pClient->sendMessageToPeer("127.0.0.1", targetPort, msg, resp);
+        return;
+    }
+
+    if (dstId.size() < 2 || dstId[0] != 'T') {
+        std::cerr << "[MsgManager] 잘못된 dstId: " << dstId << std::endl;
+        return;
+    }
+
+    try {
+        dvmNum = std::stoi(dstId.substr(1));
+    } catch (const std::exception& e) {
+        std::cerr << "[MsgManager] dstId 파싱 실패: " << e.what() << std::endl;
+        return;
+    }
+    targetPort += dvmNum;
     p2pClient->sendMessageToPeer("127.0.0.1", targetPort, msg, resp);
 }
 

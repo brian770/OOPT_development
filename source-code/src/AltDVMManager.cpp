@@ -5,9 +5,6 @@
 using namespace std;
 
 AltDVMManager::AltDVMManager() {
-    DVMList.emplace_back("2", 1, 3);
-    DVMList.emplace_back("3", 2, 4);
-    DVMList.emplace_back("4", 5, 8);
 }
 
 void AltDVMManager::addDVM(const string& dvmId, int coorX, int coorY, const string& availability) {

@@ -27,7 +27,7 @@
                 "-lws2_32",
                 "-mconsole",
                 "-o",
-                "${workspaceFolder}/test.exe"
+                "${workspaceFolder}/server.exe"
             ],
             "group": {
                 "kind": "build",
