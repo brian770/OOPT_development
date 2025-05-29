@@ -27,7 +27,7 @@
                 "-lws2_32",
                 "-mconsole",
                 "-o",
-                "${workspaceFolder}/server.exe"
+                "${workspaceFolder}/dvm.exe"
             ],
             "group": {
                 "kind": "build",
