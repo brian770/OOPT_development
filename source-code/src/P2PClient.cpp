@@ -31,7 +31,8 @@ bool P2PClient::sendMessageToPeer(const std::string &ip, int port, const std::st
 
 
     if (connect(sock, (sockaddr*)&addr, sizeof(addr)) == SOCKET_ERROR) {
-        std::cerr << "[P2PClient] connection failed to " << ip << ":" << port << "\n";
+        std::cerr << "[P2PClient] connection failed to " << ip << ":" << port 
+          << " error code: " << WSAGetLastError() << std::endl;
         closesocket(sock);
         return false;
     }
