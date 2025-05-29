@@ -44,7 +44,7 @@ bool P2PClient::sendMessageToPeer(const std::string &ip, int port, const std::st
     }
 
     // 응답 수신
-    char buffer[4096];
+    char buffer[4096] = {0};
     int bytes = recv(sock, buffer, sizeof(buffer), 0);
     if (bytes > 0) {
         response.assign(buffer, bytes);
