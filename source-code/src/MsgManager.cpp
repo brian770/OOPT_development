@@ -4,11 +4,11 @@
 
 using json = nlohmann::json;
 
-MMsgManager::MsgManager(ItemManager* im, AuthCodeManager* am, AltDVMManager* adm, P2PClient* pc, const std::string& id)
-    : itemManager(im), authCodeManager(am), altDvmManager(adm), p2pClient(pc) myId(id) {}
+MsgManager::MsgManager(ItemManager* im, AuthCodeManager* am, AltDVMManager* adm, P2PClient* pc, const std::string& id, int x, int y)
+    : itemManager(im), authCodeManager(am), altDvmManager(adm), p2pClient(pc), myId(id), coorX(x), coorY(y) {}
 
 // 재고 확인 요청 메시지 생성
-std::string MsgManager::createRequestItemStockAndLocation(const std::string& itemCode, int itemNum) {
+std::string MsgManager::createRequestItemStockAndLocation(int itemCode, int itemNum) {
     json j;
     j["msg_type"] = "req_stock";
     j["src_id"] = myId;
@@ -19,7 +19,7 @@ std::string MsgManager::createRequestItemStockAndLocation(const std::string& ite
 }
 
 // 재고 확인 응답 메시지 생성
-std::string MsgManager::createResponseItemStockAndLocation(const std::string& dstId, const std::string& itemCode, int itemNum, int coorX, int coorY) {
+std::string MsgManager::createResponseItemStockAndLocation(const std::string& dstId, int itemCode, int itemNum, int coorX, int coorY) {
     json j;
     j["msg_type"] = "resp_stock";
     j["src_id"] = myId;
@@ -32,7 +32,7 @@ std::string MsgManager::createResponseItemStockAndLocation(const std::string& ds
 }
 
 // 선결제 요청 메시지 생성
-std::string MsgManager::createRequestPrepayment(const std::string& dstId, const std::string& itemCode, int itemNum, const std::string& certCode) {
+std::string MsgManager::createRequestPrepayment(const std::string& dstId, int itemCode, int itemNum, const std::string& certCode) {
     json j;
     j["msg_type"] = "req_prepay";
     j["src_id"] = myId;
@@ -44,7 +44,7 @@ std::string MsgManager::createRequestPrepayment(const std::string& dstId, const 
 }
 
 // 선결제 가능 여부 응답 메시지 생성
-std::string MsgManager::createResponsePrepayment(const std::string& dstId, const std::string& itemCode, int itemNum, const std::string& availability) {
+std::string MsgManager::createResponsePrepayment(const std::string& dstId, int itemCode, int itemNum, const std::string& availability) {
     json j;
     j["msg_type"] = "resp_prepay";
     j["src_id"] = myId;
@@ -61,49 +61,49 @@ void MsgManager::sendTo(const std::string& dstId, const std::string& msg) {
     int dvmNum = std::stoi(dstId.substr(1)); // DVM id에서 숫자 추출("T2" → 2)
     int targetPort = basePort + dvmNum;
 
-    p2pClient->send(targetPort, msg);
+    std::string resp;
+    p2pClient->sendMessageToPeer("127.0.0.1", targetPort, msg, resp);
 }
 
 // 메시지 수신 및 파싱
 std::string MsgManager::receive(const std::string& rawMsg) {
     try {
         json j = json::parse(rawMsg);
-        std::string type = j["msg_type"];
+        std::string type = j["msg_type"].get<std::string>();
 
-        // 재고 확인 요청 
-        // dvm에서 좌표 값을 받아올 방법이 없음
+        // 재고 확인 요청
         if (type == "req_stock") {
-            std::string itemCode = j["msg_content"]["item_code"];
-            std::string dstId = j["src_id"];
-            int itemNum = itemManager->getStock(itemCode);
-            // 우리 DVM 좌표 받아와야함
+            int itemCode = j["msg_content"]["item_code"].get<int>();
+            std::string dstId = j["src_id"].get<std::string>();
+            int itemNum = itemManager->checkStock(itemCode);
+            
             return createResponseItemStockAndLocation(dstId, itemCode, itemNum, coorX, coorY);
         }
         // 재고 확인 응답 끝
         else if (type == "resp_stock") {
-            std::string itemCode = j["msg_content"]["item_code"];
-            int itemNum = j["msg_content"]["item_num"];
-            int coorX = j["msg_content"]["coor_x"];
-            int coorY = j["msg_content"]["coor_y"];
-            std::string srcId = j["src_id"];
-            if(itemManager.getSelectedItemNum() < itemNum)
-                altDvmManager.addDVM(srcId,coorX,coorY,"T");
+            int itemCode = j["msg_content"]["item_code"].get<int>();
+            int itemNum = j["msg_content"]["item_num"].get<int>();
+            int coorX = j["msg_content"]["coor_x"].get<int>();
+            int coorY = j["msg_content"]["coor_y"].get<int>();
+            std::string srcId = j["src_id"].get<std::string>();
+            if(itemManager->getSelectedItemNum() < itemNum)
+                altDvmManager->addDVM(srcId,coorX,coorY,"T");
             else
-                altDvmManager.addDVM(srcId,coorX,coorY,"F");
+                altDvmManager->addDVM(srcId,coorX,coorY,"F");
 
             return "STOCK_INFO_UPDATED";
         }
         // 선결제 요청 끝
         else if (type == "req_prepay") {
-            std::string dstId = j["src_id"];
-            std::string itemCode = j["msg_content"]["item_code"];
-            int itemNum = j["msg_content"]["item_num"];
-            std::string certCode = j["msg_content"]["cert_code"];
+            std::string dstId = j["src_id"].get<std::string>();
+            int itemCode = j["msg_content"]["item_code"].get<int>();
+            int itemNum = j["msg_content"]["item_num"].get<int>();
+            std::string certCode = j["msg_content"]["cert_code"].get<std::string>();
             std::string availability;
 
-            if(itemManager.isEnough(stoi(itemCode))){
-                itemManager.minusStock(stoi(itemCode), itemNum);
-                authCodeManager.saveAuthCode(certCode,stoi(itemCode), itemNum);
+            if(itemManager->isEnough(itemCode)){
+                itemManager->minusStock(itemCode, itemNum);
+                authCodeManager->saveAuthCode(certCode, itemCode, itemNum);
                 availability = "T";
             }
             else{
@@ -114,7 +114,7 @@ std::string MsgManager::receive(const std::string& rawMsg) {
         }
         // 선결제 응답
         else if (type == "resp_prepay") {
-            std::string availability = j["msg_content"]["availability"];
+            std::string availability = j["msg_content"]["availability"].get<std::string>();
 
             if(availability == "T") { // 해당 대안 자판기에 인증코드 저장이 완료된 경우
                 // 선결제 성공

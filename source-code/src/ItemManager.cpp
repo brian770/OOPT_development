@@ -45,6 +45,11 @@ void ItemManager::saveSelectedItem(pair<int, int> saveInfo) {
     selectedItemNum = saveInfo.second;
 }
 
+// 특정 음료수 제고 확인
+int ItemManager::checkStock(int itemId) const {
+    return itemList[itemId-1].getStock();
+}
+
 // 선택된 아이템의 재고가 충분한지 확인
 bool ItemManager::isEnough() const {
     if(itemList[selectedItemId-1].getStock() >= selectedItemNum)

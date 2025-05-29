@@ -12,15 +12,17 @@ private:
     AltDVMManager* altDvmManager;
     P2PClient* p2pClient;
     std::string myId;
+    int coorX;
+    int coorY;
 
 public:
-    MsgManager(ItemManager* im, AuthCodeManager* am, AltDVMManager* adm, P2PClient* pc, const std::string& id);
+    MsgManager(ItemManager* im, AuthCodeManager* am, AltDVMManager* adm, P2PClient* pc, const std::string& id, int x, int y);
 
     // 메시지 생성
-    std::string createRequestItemStockAndLocation(const std::string& itemCode, int item_num);
-    std::string createResponseItemStockAndLocation(const std::string& dstId, const std::string& itemCode, int itemNum, int coorX, int coorY);
-    std::string createRequestPrepayment(const std::string& dstId, const std::string& itemCode, int itemNum, const std::string& certCode);
-    std::string createResponsePrepayment(const std::string& dstId, const std::string& itemCode, int itemNum, const std::string& availability);
+    std::string createRequestItemStockAndLocation(int itemCode, int itemNum);
+    std::string createResponseItemStockAndLocation(const std::string& dstId, int itemCode, int itemNum, int coorX, int coorY);
+    std::string createRequestPrepayment(const std::string& dstId, int itemCode, int itemNum, const std::string& certCode);
+    std::string createResponsePrepayment(const std::string& dstId, int itemCode, int itemNum, const std::string& availability);
 
     // 메시지 송수신
     void sendTo(const std::string& dstId, const std::string& msg);  // 메시지 전송

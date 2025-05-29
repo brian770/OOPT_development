@@ -9,8 +9,7 @@ Bank::Bank()
 }
 
 // 결제 처리 메서드
-// 1: 결제 성공, 2: 카드 정보 없음, 3: 잔액 부족, -1: 예외상황 발생
-// 예외 상황이 있나?
+// 1: 결제 성공, 2: 카드 정보 없음, 3: 잔액 부족
 int Bank::pay(const string cardNum, int cost) {
     for(auto& iter : account){
         if(iter.first == cardNum){

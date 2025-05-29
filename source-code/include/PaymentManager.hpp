@@ -6,11 +6,10 @@
 
 class PaymentManager {
 private:
-    std::string pmId;
-
+    Bank* bank;
 public:
     // 생성자
-    PaymentManager();
+    PaymentManager(Bank* b);
 
     // 카드번호를 가져오는 메서드
     std::string getCardNum();
