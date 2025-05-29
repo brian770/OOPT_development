@@ -1,4 +1,5 @@
 source-code/build
 OOPT_TEST
 build
-test.exe
+dvm1.exe
+dvm2.exe
