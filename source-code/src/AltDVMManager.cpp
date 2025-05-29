@@ -4,7 +4,7 @@
 
 using namespace std;
 
-AltDVMManager::AltDVMManager(ItemManager im) : itemManager(im) {
+AltDVMManager::AltDVMManager() {
     DVMList.emplace_back("2", 1, 3);
     DVMList.emplace_back("3", 2, 4);
     DVMList.emplace_back("4", 5, 8);

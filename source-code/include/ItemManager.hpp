@@ -16,6 +16,7 @@ public:
 
     void showItemList() const;
     void saveSelectedItem(std::pair<int, int> saveInfo);
+    int checkStock(int itemId) const;
     bool isEnough() const;
     bool isEnough(int itemId) const;
     void minusStock();

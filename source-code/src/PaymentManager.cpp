@@ -3,8 +3,8 @@
 
 using namespace std;
 
-PaymentManager::PaymentManager() : pmId("temp") {
-}
+PaymentManager::PaymentManager(Bank* b) 
+    : bank(b) {}
 
 string PaymentManager::getCardNum() {
     string cardNum;
@@ -24,6 +24,5 @@ string PaymentManager::getCardNum() {
 
 // 1: 성공, 2: 카드 정보 안 맞음, 3: 계좌에 돈이 부족함, -1: 예외상황 발생
 int PaymentManager::requestPayment(int cost) {
-    Bank bank;
-    return bank.pay(getCardNum(), cost);
+    return bank->pay(getCardNum(), cost);
 }

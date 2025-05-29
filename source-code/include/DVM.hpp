@@ -1,4 +1,5 @@
 #pragma once
+#include "Bank.hpp"
 #include "ItemManager.hpp"
 #include "PaymentManager.hpp"
 #include "AuthCodeManager.hpp"
@@ -14,6 +15,7 @@ private:
     int coorY;
     int port;
 
+    Bank bank;
     ItemManager itemManager;
     PaymentManager paymentManager;
     AuthCodeManager authCodeManager;
@@ -29,13 +31,12 @@ public:
     void run(); // 프로그램 메인 흐름
 
 private:
-    bool askBuyOrCodeInput();
+    std::string askBuyOrCodeInput();
     std::string askUserPrepayment();
     std::pair<int, int> requestSelect();
     void showPaymentResult(int payResult);
     void showPrepaymentResult(const std::string& authCode, std::pair<int,int> location);
     std::string requestAuthCode();
-    std::pair<int,int> getDVMLocation();
 
     void handleBuyFlow();
     void handleAuthCodeFlow();

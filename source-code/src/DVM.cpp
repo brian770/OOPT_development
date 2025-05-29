@@ -18,17 +18,39 @@ using namespace std;
  * 인증코드 입력 -> 인증코드 확인 -> 인증코드 객체에 담겨있는 정보로 음료수 제공
  */
 DVM::DVM(const string& id, int x, int y, int port)
-    : DVMId(id), coorX(x), coorY(y), port(port),
-        msgManager(&itemManager, &authCodeManager, &altDVMManager, &p2pClient, id),
-        p2pServer(port, [this](const std::string& msg)) {
+    : DVMId(id),
+    coorX(x),
+    coorY(y),
+    port(port),
+    bank(),
+    itemManager(),
+    paymentManager(&bank),
+    authCodeManager(),
+    altDVMManager(),
+    p2pClient(),
+
+    msgManager(&itemManager, &authCodeManager, &altDVMManager, &p2pClient, id, x, y),
+    p2pServer(
+        port,
+        [this](const std::string& msg) -> std::string {
+            return msgManager.receive(msg);
+        }
+    )
+{
     run();
 }
 
 void DVM::run() {
-    if (askBuyOrCodeInput()) {
-        handleBuyFlow();
-    } else {
-        handleAuthCodeFlow();
+    while(true){
+        std::string answer = askBuyOrCodeInput();
+
+        if (answer == "1") {
+            handleBuyFlow();
+        } else if(answer == "2") {
+            handleAuthCodeFlow();
+        } else if(answer == "3") {
+            break;
+        }
     }
 }
 
@@ -49,7 +71,7 @@ void DVM::handleBuyFlow() {
         }
     // 재고가 부족한 경우
     } else {
-        string tempMsg = msgManager.createRequestItemStockAndLocation(to_string(itemManager.getSelectedItemId()), itemManager.getSelectedItemNum());
+        string tempMsg = msgManager.createRequestItemStockAndLocation(itemManager.getSelectedItemId(), itemManager.getSelectedItemNum());
         msgManager.sendTo(0,tempMsg);
         altDVMManager.selectAltDVM(coorX, coorY);
 
@@ -86,15 +108,15 @@ void DVM::handleAuthCodeFlow() {
 }
 
 // 구매 방식 요청 로직
-bool DVM::askBuyOrCodeInput() {
+string DVM::askBuyOrCodeInput() {
     string answer;
     while (true) {
-        cout << "음료수 구매(1) | 인증코드 입력(2): ";
+        cout << "음료수 구매(1) | 인증코드 입력(2) | 구매 종료(3): ";
         cin >> answer;
-        if (answer == "1" || answer == "2") break;
-        cout << "1 또는 2로 입력해주세요." << endl;
+        if (answer == "1" || answer == "2" || answer == "3") break;
+        cout << "1, 2, 3 중에서 입력해주세요." << endl;
     }
-    return answer == "1";
+    return answer;
 }
 
 // 선결제 의사 확인 로직
@@ -163,9 +185,4 @@ string DVM::requestAuthCode() {
         cout << "5자리 인증코드를 입력해주세요." << endl;
     }
     return code;
-}
-
-pair<int, int> DVM::getDVMLocation()
-{
-    return {coorX,coorY};
 }

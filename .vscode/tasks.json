@@ -8,16 +8,31 @@
             "args": [
                 "-std=c++17",
                 "-g",
-                "${workspaceFolder}/source-code/src/*.cpp",
+                "${workspaceFolder}/source-code/src/DVM.cpp",
+                "${workspaceFolder}/source-code/src/P2PServer.cpp",
+                "${workspaceFolder}/source-code/src/P2PClient.cpp",
+                "${workspaceFolder}/source-code/src/MsgManager.cpp",
+                "${workspaceFolder}/source-code/src/ItemManager.cpp",
+                "${workspaceFolder}/source-code/src/AltDVMManager.cpp",
+                "${workspaceFolder}/source-code/src/AuthCodeManager.cpp",
+                "${workspaceFolder}/source-code/src/PaymentManager.cpp",
+                "${workspaceFolder}/source-code/src/Bank.cpp",
+                "${workspaceFolder}/source-code/src/Item.cpp",
+                "${workspaceFolder}/source-code/src/AltDVM.cpp",
+                "${workspaceFolder}/source-code/src/AuthCode.cpp",
+                "${workspaceFolder}/source-code/src/main.cpp",
                 "-I${workspaceFolder}/source-code/include",
+                "-finput-charset=utf-8",
+                "-fexec-charset=utf-8",
+                "-lws2_32",
+                "-mconsole",
                 "-o",
-                "${workspaceFolder}/main.exe"
+                "${workspaceFolder}/test.exe"
             ],
             "group": {
                 "kind": "build",
                 "isDefault": true
-            },
-            "problemMatcher": ["$gcc"]
+            }
         }
     ]
 }

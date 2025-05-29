@@ -6,12 +6,9 @@
 
 #pragma comment(lib, "ws2_32.lib")  // WinSock 라이브러리 링크
 
-/**
- * 
- */
-P2PClient::P2PClient()
-{
-}
+P2PClient::P2PClient(){}
+P2PClient::~P2PClient(){}
+
 bool P2PClient::sendMessageToPeer(const std::string &ip, int port, const std::string &msg, std::string &response)
 {
     response.clear();
