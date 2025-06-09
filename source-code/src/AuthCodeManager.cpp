@@ -13,12 +13,9 @@ AuthCodeManager::AuthCodeManager()
     authCodeList.emplace_back("12345", 1, 1);
 }
 
+// 인증코드 생성
 string AuthCodeManager::generateCode() {
-    // 인증코드 생성
-    srand((unsigned int)time(NULL));
-
-    // 숫자와 대소문자로 구성된 5자리 문자열 저장할 변수
-    char code_str[6];
+    char code_str[6]; // 숫자와 대소문자로 구성된 5자리 문자열
     int type; // 0: 숫자, 1: 소문자, 2: 대문자
 
     for (int i = 0; i < 5; i++) {
