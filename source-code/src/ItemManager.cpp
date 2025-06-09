@@ -1,32 +1,44 @@
 #include "ItemManager.hpp"
 #include <iostream>
+#include <time.h>
 
 using namespace std;
 
 // 생성자
 ItemManager::ItemManager()
     : selectedItemId(0), selectedItemNum(0) {
+    srand((unsigned int)time(NULL)); 
+    
+    string name[20] = {
+        "콜라", "사이다", "녹차", "홍차", "밀크티",
+        "탄산수", "보리차", "캔커피", "물", "에너지드링크",
+        "유자차", "식혜", "아이스티", "딸기주스", "오렌지주스",
+        "포도주스", "이온음료", "아메리카노", "핫초코", "카페라떼"
+    };
+
+    int cost[20] = {
+        1500, 1400, 1300, 1350, 1800,
+        1200, 1100, 1600, 1000, 2000,
+        1500, 1400, 1350, 1700, 1700,
+        1700, 1300, 1900, 1800, 2000
+    };
+
+    int stock[20] = {0};
+
+    // 재고 초기화: 20개 중 7개 항목에만 재고를 할당
+    int count = 0;
+    while (count < 7) {
+        int index = rand() % 20;
+        if (stock[index] == 0) { // 아직 선택되지 않은 항목이라면
+            stock[index] = 1 + rand() % 99; // 1~99 사이 재고 할당
+            count++;
+        }
+    }
+
     // 초기 아이템 등록
-    itemList.emplace_back(1, "콜라", 1500, 3);
-    itemList.emplace_back(2, "사이다", 1400, 0);
-    itemList.emplace_back(3, "녹차", 1300, 0);
-    itemList.emplace_back(4, "홍차", 1350, 0);
-    itemList.emplace_back(5, "밀크티", 1800, 7);
-    itemList.emplace_back(6, "탄산수", 1200, 0);
-    itemList.emplace_back(7, "보리차", 1100, 0);
-    itemList.emplace_back(8, "캔커피", 1600, 8);
-    itemList.emplace_back(9, "물", 1000, 99);
-    itemList.emplace_back(10, "에너지드링크", 2000, 0);
-    itemList.emplace_back(11, "유자차", 1500, 0);
-    itemList.emplace_back(12, "식혜", 1400, 0);
-    itemList.emplace_back(13, "아이스티", 1350, 0);
-    itemList.emplace_back(14, "딸기주스", 1700, 70);
-    itemList.emplace_back(15, "오렌지주스", 1700, 0);
-    itemList.emplace_back(16, "포도주스", 1700, 0);
-    itemList.emplace_back(17, "이온음료", 1300, 8);
-    itemList.emplace_back(18, "아메리카노", 1900, 0);
-    itemList.emplace_back(19, "핫초코", 1800, 0);
-    itemList.emplace_back(20, "카페라떼", 2000, 5);
+    for (int i = 0; i < 20; i++) {
+        itemList.emplace_back(i + 1, name[i], cost[i], stock[i]);
+    }
 }
 
 // 아이템 목록 보여주기

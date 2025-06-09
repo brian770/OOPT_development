@@ -7,6 +7,7 @@
             "command": "g++",
             "args": [
                 "-std=c++17",
+                "-pthread",
                 "-g",
                 "${workspaceFolder}/source-code/src/DVM.cpp",
                 "${workspaceFolder}/source-code/src/P2PServer.cpp",
