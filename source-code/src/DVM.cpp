@@ -37,6 +37,7 @@ DVM::DVM(const string& id, int x, int y, int port)
         }
     )
 {
+    p2pServer.start();
     run();
 }
 
@@ -83,7 +84,14 @@ void DVM::handleBuyFlow() {
             string authCode = authCodeManager.generateCode();
             string dvmID = altDVMManager.getSelectedDVM();
 
-            // if(msgManager.receive())
+            string tempMsg = msgManager.createRequestPrepayment(dvmID, itemManager.getSelectedItemId(), itemManager.getSelectedItemNum(), authCode);
+            msgManager.sendTo(dvmID, tempMsg);
+
+            if(msgManager.receive(tempMsg) == "PREPAYMENT_FAILED") {
+                cout << "대안 자판기에서 재고가 부족합니다." << endl;
+                return;
+            }
+
             int payResult = paymentManager.requestPayment(itemManager.getPaymentAmount());
             showPaymentResult(payResult);
 
@@ -141,15 +149,26 @@ pair<int, int> DVM::requestSelect() {
     while (true) {
         cout << "음료수 번호를 입력해주세요: ";
         cin >> itemId;
-        if (itemId >= 1 && itemId <= 20) break;
-        cout << "음료수 번호는 1 ~ 20 사이의 값입니다." << endl;
+
+        if (cin.fail() || itemId < 1 || itemId > 20) {
+            cin.clear(); // 입력 스트림 오류 플래그 초기화
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // 잘못된 입력 무시
+            cout << "음료수 번호는 1 ~ 20 사이의 값입니다." << endl;
+            continue;
+        }
+        break;
     }
 
     while (true) {
         cout << "수량을 입력해주세요: ";
         cin >> quantity;
-        if (quantity >= 1 && quantity <= 99) break;
-        cout << "음료수 수량은 1~99 까지만 선택 가능합니다." << endl;
+        if (cin.fail() || quantity < 1 || quantity > 99) {
+            cin.clear(); // 입력 스트림 오류 플래그 초기화
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // 잘못된 입력 무시
+            cout << "음료수 수량은 1~99 까지만 선택 가능합니다." << endl;
+            continue;
+        }
+        break;
     }
 
     return {itemId, quantity};
