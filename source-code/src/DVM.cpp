@@ -104,6 +104,7 @@ void DVM::handleBuyFlow() {
             showPrepaymentResult("noprepayment", altDVMManager.getAltDVMLocation());
         }
     }
+    altDVMManager.reset();
 }
 
 // 인증코드 처리 로직
